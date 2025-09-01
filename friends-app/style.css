@@ -1,0 +1,74 @@
+/* Custom Styles */
+body {
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-top: 40px;
+}
+
+#search {
+    max-width: 400px;
+}
+
+.table {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.toast-progress {
+    height: 5px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    animation: progressBar 3s linear forwards;
+}
+
+@keyframes progressBar {
+    0% { width: 100%; }
+    100% { width: 0%; }
+}
+
+.toast {
+    background-color: #fff !important; /* Override Bootstrap's default */
+    opacity: 1 !important; /* Ensure no transparency */
+    position: relative; /* Ensure absolute positioning of child elements works correctly */
+}
+
+.toast-body {
+    color: #212529; /* Darken text for better contrast */
+}
+
+.table th:nth-child(2), .table td:nth-child(2) { /* Email column */
+    min-width: 180px;
+}
+
+.table th:nth-child(3), .table td:nth-child(3) { /* Number column */
+    min-width: 150px;
+}
+
+.table th:nth-child(4), .table td:nth-child(4) { /* URL column */
+    min-width: 200px;
+}
+
+.table th:nth-child(5), .table td:nth-child(5) { /* Actions column */
+    min-width: 120px;
+}
