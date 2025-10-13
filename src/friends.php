@@ -27,16 +27,25 @@ function readFriends(PDO $pdo, string $search = ''): array {
 function validateAndNormalize(array $data): array {
     $name = trim($data['name'] ?? '');
     $email = strtolower(trim($data['email'] ?? ''));
-    $phone = preg_replace('/\D/', '', $data['phone'] ?? ''); // Digits only
+    $phone = trim($data['phone'] ?? '');
     $url = strtolower(trim($data['url'] ?? ''));
 
     if (empty($name)) {
         return ['error' => 'Name is required.'];
     }
+    if (!preg_match('/^[a-zA-Z\s]+$/', $name)) {
+        return ['error' => 'Name can only contain letters and spaces.'];
+    }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return ['error' => 'Invalid email format.'];
     }
+    if (!empty($phone) && !ctype_digit($phone)) {
+        return ['error' => 'Phone number can only contain digits.'];
+    }
     if (!empty($url)) {
+        if (strpos($url, '.') === false && strpos($url, '/') === false) {
+            $url .= '.com';
+        }
         if (strpos($url, 'http://') === 0) {
             return ['error' => 'HTTP URLs are not allowed; use HTTPS.'];
         }
@@ -77,7 +86,9 @@ function createFriend(PDO $pdo, array $data): string {
             ':url' => $sanitizedData['url']
         ]);
         $id = $pdo->lastInsertId();
-        $friend = $pdo->query("SELECT * FROM barangan_friends WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare("SELECT * FROM barangan_friends WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+        $friend = $stmt->fetch(PDO::FETCH_ASSOC);
         return json_encode(['success' => 'Friend added successfully.', 'friend' => $friend]);
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) { // Integrity constraint violation (UNIQUE)
@@ -113,7 +124,9 @@ function updateFriend(PDO $pdo, array $data): string {
             ':url' => $sanitizedData['url'],
             ':id' => $sanitizedData['id']
         ]);
-        $friend = $pdo->query("SELECT * FROM barangan_friends WHERE id = {$sanitizedData['id']}")->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare("SELECT * FROM barangan_friends WHERE id = :id");
+        $stmt->execute([':id' => $sanitizedData['id']]);
+        $friend = $stmt->fetch(PDO::FETCH_ASSOC);
         return json_encode(['success' => 'Friend updated successfully.', 'friend' => $friend]);
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {

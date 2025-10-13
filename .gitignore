@@ -1,0 +1,5 @@
+# Ignore the SQLite database file
+database/barangan_friends.db
+
+# Ignore zip files
+*.zip
